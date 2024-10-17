@@ -8,9 +8,9 @@
             </div>
 
             <div>
-                @can('create permission')
+                @can('create role')
                     <a class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        href="{{ route('permission.create') }}">Create Permission</a>
+                        href="{{ route('role.create') }}">Create Role</a>
                 @endcan
 
             </div>
@@ -37,7 +37,9 @@
                             <thead class="bg-gray-200">
                                 <tr>
                                     <th class="py-2 px-4 border-b border-gray-300 text-center text-gray-700">Serial</th>
-                                    <th class="py-2 px-4 border-b border-gray-300 text-center text-gray-700">Permission
+                                    <th class="py-2 px-4 border-b border-gray-300 text-center text-gray-700">Role
+                                    </th>
+                                    <th class="py-2 px-4 border-b border-gray-300 text-center text-gray-700">Permissions
                                     </th>
                                     <th class="py-2 px-4 border-b border-gray-300 text-center text-gray-700">Created At
                                     </th>
@@ -46,25 +48,27 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($permissions as $permission)
+                                @foreach ($roles as $role)
                                     <tr>
                                         <td class="py-2 px-4 border-b border-gray-300 text-center">
                                             {{ $loop->iteration }}</td>
                                         <td class="py-2 px-4 border-b border-gray-300 text-center">
-                                            {{ $permission->name }}</td>
+                                            {{ $role->name }}</td>
                                         <td class="py-2 px-4 border-b border-gray-300 text-center">
-                                            {{ \Carbon\Carbon::parse($permission->created_at)->format('d M y') }}
+                                            {{ $role->permissions->pluck('name')->implode(', ') }}</td>
+                                        <td class="py-2 px-4 border-b border-gray-300 text-center">
+                                            {{ \Carbon\Carbon::parse($role->created_at)->format('d M y') }}
                                         </td>
                                         <td class="py-2 px-4 border-b border-gray-300 text-center">
-                                            @can('edit permission')
+                                            @can('edit role')
                                                 <a class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline"
-                                                    href="{{ route('permission.edit', $permission->id) }}">Edit</a>
+                                                    href="{{ route('role.edit', $role->id) }}">Edit</a>
                                             @endcan
 
-                                            @can('delete permission')
+                                            @can('delete role')
                                                 <a class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline"
                                                     href="javascript:void(0);"
-                                                    onclick="confirmDelete({{ $permission->id }})">Delete</a>
+                                                    onclick="confirmDelete({{ $role->id }})">Delete</a>
                                             @endcan
 
                                         </td>
@@ -73,7 +77,7 @@
                             </tbody>
                         </table>
                     </div>
-                    {{ $permissions->links() }}
+                    {{ $roles->links() }}
                 </div>
             </div>
         </div>
@@ -94,7 +98,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "get",
-                            url: "/permission/delete/" + id,
+                            url: "/role/delete/" + id,
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
